@@ -22,7 +22,7 @@
     }
 
     //データをセットするクラス...➀
-    class GetData {
+    class QuizeDataAccessor {
 
         //Open Trivia DBからデータの取得（クイズのデータ１０問）
         getData() {
@@ -37,7 +37,7 @@
                         const setGet = new SetGet(data['results']);
 
                         //➁のインスタンスを作成し、jsonデータを表示するメソッドを呼ぶ
-                        const display = new DisplayData(setGet.dataArray);
+                        const display = new QuizDataHtmlConverter(setGet.dataArray);
                         
                         display.displayData;
                         
@@ -60,7 +60,7 @@
     };
 
     //➀でセットしたデータをhtml上で表示する...➁
-    class DisplayData {
+    class QuizDataHtmlConverter {
 
         //dataArrayは➀で取得したOpen Trivia DBOpen Trivia DBのデータ１０問
         constructor(dataArray) {
@@ -78,7 +78,7 @@
         }
 
         //Open Trivia DBから取得したデータの選択肢をシャッフル
-        shuffle(arr) {
+        shuffleAnswer(arr) {
             for (let i = arr.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
                 //選択肢のj番目とi番目を入れ替える
@@ -121,7 +121,7 @@
             buttonColumn.classList.add('buttonColumn');
 
             //4択の回答をシャッフルする
-            let quizSet = this.shuffle([
+            let quizSet = this.shuffleAnswer([
                 ...dataNumber['incorrect_answers'],
                 dataNumber['correct_answer']
             ]);
@@ -134,7 +134,7 @@
             });
 
             //➂のインスタンスを作成し、正誤を判断するメソッドを呼ぶ
-            let answer = new Answer();
+            let answer = new JudgementAnswer();
             answer.selectAnswer(dataArray,dataNumber['correct_answer']);
 
             //現在の問題数が10なら、⓸のインスタンスを作成しクイズを終了する
@@ -147,7 +147,7 @@
     }
 
     //➁で作成した選択肢ボタンの正誤を判定する...➂
-    class Answer {
+    class JudgementAnswer {
         constructor(dataArray) {
             //1.画面上に表示されているhtmlを消去する
             this.dataArray = dataArray;
@@ -167,7 +167,7 @@
                     currentNum++
 
                     //➁のインスタンスを再び作成し、次の問題に進む
-                    const display = new DisplayData(dataArray);
+                    const display = new QuizDataHtmlConverter(dataArray);
                     display.displayData;
                 });
             });
@@ -208,6 +208,6 @@
     //⓸：currentNumが９になったらクラス⓸のインスタンスを呼びクイズの結果を出力し、再び➀へ
     */
 
-    let data = new GetData();
+    let data = new QuizeDataAccessor();
     data.getData();
 }
